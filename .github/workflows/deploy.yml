@@ -22,12 +22,31 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
-      - run: npm ci
+      - name: Install
+        run: npm ci --no-audit --no-fund
 
-      - run: npm test
+      # 环境自检：把关键信息写进 annotation，未登录也能在公开仓库读到
+      - name: Environment
+        run: |
+          echo "node=$(node -v) npm=$(npm -v)"
+          echo "vitest=$(command -v vitest || echo MISSING)"
+          echo "bin_count=$(ls node_modules/.bin | wc -l)"
+          echo "::notice title=environment::node=$(node -v) npm=$(npm -v) vitest=$(command -v vitest || echo MISSING) bins=$(ls node_modules/.bin | wc -l) cwd=$(pwd)"
+
+      - name: Test
+        shell: bash
+        run: |
+          set -o pipefail
+          npm test 2>&1 | tee /tmp/test.log
+          status=${PIPESTATUS[0]}
+          if [ "$status" -ne 0 ]; then
+            msg=$(tail -c 2500 /tmp/test.log | tr '\n' '~' | tr -d '\r')
+            echo "::error title=tests failed ($status)::$msg"
+            exit "$status"
+          fi
 
       - name: Build
         run: npm run build
