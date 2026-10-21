@@ -14,6 +14,7 @@ const PROFILE: ProfileState = {
   retireAge: 60,
   city: 'beijing',
   onboarded: true,
+  isDemo: false,
   schemaVersion: 1,
 }
 

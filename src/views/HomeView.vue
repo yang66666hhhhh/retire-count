@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue'
-import { HardDrive, Hourglass, ShieldCheck } from 'lucide-vue-next'
+import { ArrowRight, HardDrive, Hourglass, ShieldCheck, Sparkles } from 'lucide-vue-next'
 import CountdownCard from '@/components/CountdownCard.vue'
 import IncomeCalculator from '@/components/IncomeCalculator.vue'
 import LifePlanBoard from '@/components/LifePlanBoard.vue'
@@ -63,6 +63,21 @@ watch(
     </header>
 
     <main class="mx-auto w-full max-w-6xl px-4 pb-12 pt-4 sm:px-6 sm:pt-6">
+      <div
+        v-if="profile.isDemo"
+        class="mb-4 flex flex-wrap items-center gap-3 rounded-xl border border-amber-400/20 bg-amber-400/[0.06] px-4 py-3"
+      >
+        <Sparkles class="h-4 w-4 shrink-0 text-amber-300" />
+        <p class="min-w-0 flex-1 text-[12px] leading-relaxed text-amber-100/80">
+          现在看到的是<span class="font-medium text-amber-200">演示数据</span>
+          （上海 · 1994 年 · 55 岁退休 · 月薪 ¥25,000）。下面的数字不是你的。
+        </p>
+        <button type="button" class="btn-ghost px-3 py-1.5 text-[12px]" @click="onboardingOpen = true">
+          改成我的
+          <ArrowRight class="h-3.5 w-3.5" />
+        </button>
+      </div>
+
       <div class="grid grid-cols-1 gap-4 lg:grid-cols-12">
         <div class="lg:col-span-5">
           <CountdownCard

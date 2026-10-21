@@ -99,7 +99,7 @@ const milestone = computed(() => {
         <span class="font-mono text-xl font-semibold tabular-nums text-slate-100">
           {{ (progress * 100).toFixed(1) }}%
         </span>
-        <span class="mt-0.5 text-[10px] tracking-wider text-slate-500">工作阶段</span>
+        <span class="mt-0.5 text-[10px] tracking-wider text-slate-500">工作进度</span>
       </ProgressRing>
     </div>
 

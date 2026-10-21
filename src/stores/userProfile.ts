@@ -10,6 +10,7 @@ export const DEFAULT_PROFILE: ProfileState = {
   retireAge: 55,
   city: DEFAULT_CITY,
   onboarded: false,
+  isDemo: false,
   schemaVersion: 1,
 }
 

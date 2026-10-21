@@ -123,6 +123,7 @@ function sanitizeProfile(raw: unknown, issues: string[]): ProfileState {
     retireAge: num(src.retireAge, 55, issues, '退休年龄', 45, 70),
     city: CITY_SET.has(cityRaw) ? cityRaw : DEFAULT_CITY,
     onboarded: typeof src.onboarded === 'boolean' ? src.onboarded : true,
+    isDemo: src.isDemo === true,
     schemaVersion: SCHEMA_VERSION,
   }
 }

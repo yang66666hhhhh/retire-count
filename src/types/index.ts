@@ -13,6 +13,8 @@ export interface ProfileState {
   retireAge: number
   city: string
   onboarded: boolean
+  /** 跳过引导后为 true，页面顶部会提示「当前是演示数据」 */
+  isDemo: boolean
   schemaVersion: number
 }
 

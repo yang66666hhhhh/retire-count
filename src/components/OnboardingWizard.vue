@@ -101,6 +101,7 @@ function finish() {
     gender: form.value.gender,
     retireAge: form.value.retireAge,
     city: form.value.city,
+    isDemo: false,
   })
   finance.monthlySalary = form.value.monthlySalary
   finance.yearsContributed = form.value.yearsContributed
@@ -111,10 +112,10 @@ function finish() {
 }
 
 function skip() {
-  profile.completeOnboarding({ onboarded: true })
+  profile.completeOnboarding({ isDemo: true })
   emit('update:open', false)
   emit('done')
-  pushToast('已载入演示数据，可以随时点右上角「备份」修改档案')
+  pushToast('已载入演示数据 · 页面顶部可一键改成你自己的信息')
 }
 </script>
 
@@ -122,7 +123,7 @@ function skip() {
   <AppDialog
     :open="props.open"
     title="先花 30 秒，把倒计时对准你"
-    description="只存在这台设备上，不会上传到任何服务器。"
+    description="三步填完。所有金额都会换算成「今天的购买力」，不用自己算通胀。数据只存在这台设备上。"
     size="md"
     :hide-close="true"
     @update:open="emit('update:open', $event)"
@@ -176,6 +177,7 @@ function skip() {
           min="1940-01"
           class="input font-mono"
         />
+        <p class="mt-1.5 text-[11px] text-slate-500">只用来算还有多少天到退休日，精确到月份就够。</p>
       </div>
       <div>
         <span class="label">性别（用于确定默认退休年龄）</span>
@@ -201,6 +203,9 @@ function skip() {
             <span class="ml-1 text-[11px] opacity-60">{{ option.age }} 岁</span>
           </button>
         </div>
+        <p class="mt-1.5 text-[11px] text-slate-500">
+          男女法定退休年龄不同，这里只是帮你选个默认值，下一步可以改成你实际打算退休的年龄。
+        </p>
       </div>
     </div>
 
@@ -242,10 +247,12 @@ function skip() {
         <div>
           <label class="label" for="ob-salary">现在月薪（税前）</label>
           <NumberField id="ob-salary" v-model="form.monthlySalary" prefix="¥" suffix="元/月" />
+          <p class="mt-1.5 text-[11px] text-slate-500">工资越高，未来养老金越多；社保缴费有上限。</p>
         </div>
         <div>
           <label class="label" for="ob-years">已缴社保年限</label>
           <NumberField id="ob-years" v-model="form.yearsContributed" :scale="1" :max="40" suffix="年" />
+          <p class="mt-1.5 text-[11px] text-slate-500">不确定就填个大概，缴得越久养老金越多。</p>
         </div>
       </div>
       <div>
@@ -257,7 +264,7 @@ function skip() {
       </div>
       <div class="flex items-start gap-2 rounded-xl border border-emerald-400/15 bg-emerald-400/[0.06] p-3 text-[12px] leading-relaxed text-emerald-200/80">
         <Sparkles class="mt-0.5 h-3.5 w-3.5 shrink-0" />
-        <span>不算不知道：按演示数据，退休后每个月的缺口会一直陪着你 30 年。下一步就能看到具体数字。</span>
+        <span>点「开始倒计时」，你会直接看到三件事：退休后社保发多少、每月还差多少、现在该存多少。看不明白的词，鼠标移到 ⓘ 上就有解释。</span>
       </div>
     </div>
 
