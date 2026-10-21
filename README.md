@@ -36,7 +36,7 @@ npm run dev        # http://localhost:5173
 npm run build      # 类型检查 + 构建
 npm test           # 单元测试（39 个用例）
 npm run size       # 打印 gzip 体积并做预算断言
-npm run icons      # 从 public/icon.svg 重新生成 PWA 图标（需要 sharp）
+npm run icons      # 从 public/icon.svg 重新生成 PWA 图标（需先 npm i -D sharp）
 ```
 
 ---

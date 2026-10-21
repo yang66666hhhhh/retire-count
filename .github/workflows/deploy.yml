@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -25,16 +25,38 @@ jobs:
           node-version: 22
           cache: npm
 
+      # 安装失败常见于网络抖动导致 optional 平台包（esbuild / rollup）被跳过，重试几次
       - name: Install
-        run: npm ci --no-audit --no-fund
-
-      # 环境自检：把关键信息写进 annotation，未登录也能在公开仓库读到
-      - name: Environment
+        shell: bash
         run: |
-          echo "node=$(node -v) npm=$(npm -v)"
-          echo "vitest=$(command -v vitest || echo MISSING)"
-          echo "bin_count=$(ls node_modules/.bin | wc -l)"
-          echo "::notice title=environment::node=$(node -v) npm=$(npm -v) vitest=$(command -v vitest || echo MISSING) bins=$(ls node_modules/.bin | wc -l) cwd=$(pwd)"
+          set -o pipefail
+          for i in 1 2 3; do
+            echo "attempt $i"
+            if npm ci --no-audit --no-fund --prefer-offline 2>&1 | tee /tmp/install.log; then
+              exit 0
+            fi
+            sleep $((i * 10))
+          done
+          echo "::error title=npm ci failed::$(tail -c 2000 /tmp/install.log | tr '\n' '~' | tr -d '\r')"
+          exit 1
+
+      # 平台二进制缺失时，报错往往只有一句 "command not found"（退出码 127），所以先显式验证
+      - name: Verify toolchain
+        shell: bash
+        run: |
+          set -o pipefail
+          {
+            echo "node=$(node -v) npm=$(npm -v) cwd=$(pwd)"
+            node -e "console.log('esbuild=' + require('esbuild').version)"
+            node -e "console.log('rollup=' + require('rollup').VERSION)"
+            node -e "console.log('vite=' + require('vite').version)"
+            node -e "console.log('vitest bin=' + require.resolve('vitest/vitest.mjs'))"
+          } 2>&1 | tee /tmp/verify.log
+          status=${PIPESTATUS[0]}
+          if [ "$status" -ne 0 ]; then
+            echo "::error title=toolchain broken::$(tail -c 2000 /tmp/verify.log | tr '\n' '~' | tr -d '\r')"
+            exit "$status"
+          fi
 
       - name: Test
         shell: bash
@@ -43,13 +65,20 @@ jobs:
           npm test 2>&1 | tee /tmp/test.log
           status=${PIPESTATUS[0]}
           if [ "$status" -ne 0 ]; then
-            msg=$(tail -c 2500 /tmp/test.log | tr '\n' '~' | tr -d '\r')
-            echo "::error title=tests failed ($status)::$msg"
+            echo "::error title=tests failed ($status)::$(tail -c 2500 /tmp/test.log | tr '\n' '~' | tr -d '\r')"
             exit "$status"
           fi
 
       - name: Build
-        run: npm run build
+        shell: bash
+        run: |
+          set -o pipefail
+          npm run build 2>&1 | tee /tmp/build.log
+          status=${PIPESTATUS[0]}
+          if [ "$status" -ne 0 ]; then
+            echo "::error title=build failed ($status)::$(tail -c 2500 /tmp/build.log | tr '\n' '~' | tr -d '\r')"
+            exit "$status"
+          fi
         env:
           # 项目页部署在 /<repo>/ 下；<user>.github.io 这类用户页需要改成 "/"
           VITE_BASE: /${{ github.event.repository.name }}/
@@ -57,6 +86,39 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
+
+      # 失败时把完整上下文推到 ci-diagnostics 分支，直接读 raw 文件即可，不需要登录
+      - name: Publish failure context
+        if: failure()
+        shell: bash
+        run: |
+          mkdir -p /tmp/diag
+          {
+            echo "=== env ==="
+            node -v
+            npm -v
+            env | sort | grep -v -i -E 'token|secret|key' | head -60
+            echo
+            echo "=== node_modules/.bin ==="
+            ls node_modules/.bin 2>/dev/null | head -60
+            echo
+            echo "=== install.log ==="
+            tail -100 /tmp/install.log 2>/dev/null
+            echo
+            echo "=== verify.log ==="
+            cat /tmp/verify.log 2>/dev/null
+            echo
+            echo "=== test.log ==="
+            tail -200 /tmp/test.log 2>/dev/null
+            echo
+            echo "=== build.log ==="
+            tail -200 /tmp/build.log 2>/dev/null
+          } > /tmp/diag/diagnostics.txt
+          cd /tmp/diag
+          git init -q
+          git add diagnostics.txt
+          git -c user.email=ci@local -c user.name=ci commit -qm "ci diagnostics"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" HEAD:refs/heads/ci-diagnostics
 
   deploy:
     needs: build

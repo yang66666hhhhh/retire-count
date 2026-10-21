@@ -1,9 +1,17 @@
 // 一次性脚本：把 public/icon.svg 转成 PWA 需要的 PNG
-// 用法：npm run icons
-import sharp from 'sharp'
+// 用法：npm i -D sharp && npm run icons
+// sharp 只在图标需要重新生成时才用，所以没有放进默认 devDependencies（它带一堆平台二进制，拖慢 CI 安装）
 import { readFileSync, mkdirSync } from 'node:fs'
 import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
+
+let sharp
+try {
+  sharp = (await import('sharp')).default
+} catch {
+  console.error('缺少 sharp。请先运行：npm i -D sharp')
+  process.exit(1)
+}
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const publicDir = resolve(root, 'public')

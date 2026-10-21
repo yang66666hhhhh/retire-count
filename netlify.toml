@@ -3,7 +3,7 @@
   publish = "dist"
 
 [build.environment]
-  NODE_VERSION = "20"
+  NODE_VERSION = "22"
 
 # Service Worker 必须每次回源，否则用户会卡在旧版本
 [[headers]]
