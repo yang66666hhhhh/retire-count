@@ -6,9 +6,11 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 
 function run(cmd, args, options = {}) {
+  console.log(`\n$ ${cmd} ${args.join(' ')}`)
   const result = spawnSync(cmd, args, { stdio: 'inherit', ...options })
+  if (result.error) console.error(result.error)
   if (result.status !== 0) {
-    console.error(`\n命令失败：${cmd} ${args.join(' ')}`)
+    console.error(`\n命令失败：${cmd} ${args.join(' ')} (status=${result.status})`)
     process.exit(result.status ?? 1)
   }
   return result

@@ -34,6 +34,7 @@
 npm install
 npm run dev        # http://localhost:5173
 npm run build      # 类型检查 + 构建
+npm run deploy     # 构建并发布到 GitHub Pages（gh-pages 分支）
 npm test           # 单元测试（39 个用例）
 npm run size       # 打印 gzip 体积并做预算断言
 npm run icons      # 从 public/icon.svg 重新生成 PWA 图标（需先 npm i -D sharp）
@@ -198,17 +199,22 @@ progress  = (今天 - workStart) / (退休日 - workStart)
 
 **Vercel**：仓库根目录已有 `vercel.json`（构建命令、输出目录、`sw.js` 不缓存），导入仓库即可。
 
-**Netlify**：已有 `netlify.toml`（`npm run build` → `dist`，Node 20，同样的缓存头），导入仓库即可。
+**Netlify**：已有 `netlify.toml`（`npm run build` → `dist`，Node 22，同样的缓存头），导入仓库即可。
 
-**GitHub Pages**：`.github/workflows/deploy.yml` 会在 push 到 `main` 时跑测试、构建并发布。项目页自动使用 `/<repo>/` 作为 base；如果仓库是 `<user>.github.io` 这类用户页，把 workflow 里的 `VITE_BASE` 改成 `/`。
-
-手动构建项目页：
+**GitHub Pages**（本项目采用的方式）：
 
 ```bash
-VITE_BASE=/<repo-name>/ npm run build
+npm run deploy
 ```
 
-`base` 会同时作用于 `manifest.start_url` / `scope` 和 Service Worker 的 `navigateFallback`，否则装不上 PWA。
+这个脚本会：
+
+1. 用 `VITE_BASE=/<repo-name>/` 构建（base 同时作用于 `manifest.start_url` / `scope` 和 Service Worker 的 `navigateFallback`，否则装不上 PWA）；
+2. 把 `dist/` 内容（含 `.nojekyll`）强推到 `gh-pages` 分支。
+
+首次需要在仓库 **Settings → Pages → Source** 选择 **Deploy from a branch**，分支 `gh-pages` / `(root)`。之后每次 `npm run deploy` 直接覆盖更新。
+
+> **为什么不用 Actions 自动部署**：`.github/workflows/ci.yml` 保留了一套「测试 + 构建 + 体积断言」的流程，但默认只支持手动触发（`workflow_dispatch`）。在当前的网络环境里，GitHub Runner 执行 `npm ci` 经常超过 20 分钟甚至卡死，导致 Pages 的 Actions 部署永远等不到构建产物。等安装稳定后，把 `on.push` 打开、并换回 `actions/deploy-pages` 即可。
 
 ---
 
