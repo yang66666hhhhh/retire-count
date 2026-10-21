@@ -12,7 +12,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "icons": "node scripts/gen-icons.mjs",
-    "size": "node scripts/check-size.mjs"
+    "size": "node scripts/check-size.mjs",
+    "deploy": "node scripts/deploy-gh-pages.mjs"
   },
   "dependencies": {
     "clsx": "^2.1.1",

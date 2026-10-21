@@ -1,0 +1,36 @@
+name: CI
+
+# 只做验证，不负责部署（部署走 `npm run deploy` -> gh-pages 分支）。
+# 之所以默认手动触发：这台环境里 GitHub Runner 的 npm 安装经常 20 分钟以上甚至卡死，
+# 而 Pages 的 Actions 部署必须先跑完一次完整安装。等网络稳定后可以把 on.push 打开。
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci --no-audit --no-fund --prefer-offline
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
+        env:
+          VITE_BASE: /${{ github.event.repository.name }}/
+
+      - name: Size budget
+        run: npm run size
