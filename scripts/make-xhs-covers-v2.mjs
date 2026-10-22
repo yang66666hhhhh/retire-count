@@ -71,6 +71,26 @@ const covers = {
   <div class="line" style="font-size:176px;color:#e2e8f0;margin-top:46px">退休只领</div>
   <div class="line" style="font-size:300px;color:#fbbf24;margin-top:12px;white-space:nowrap">1.1<span style="font-size:.62em;margin-left:.05em">万</span></div>
   <div style="margin-top:52px;font-size:52px;font-weight:700;color:#94a3b8">养老金只有工资的 46%</div>`,
+
+  D: `
+  <div class="kicker">打工人退休倒计时</div>
+  <div class="line" style="font-size:132px;color:#94a3b8;margin-top:46px">还有</div>
+  <div style="display:flex;align-items:baseline;gap:18px;margin-top:4px">
+    <span class="line mono" style="font-size:360px;background:linear-gradient(135deg,#ffffff 16%,#34d399 118%);
+      -webkit-background-clip:text;background-clip:text;color:transparent">8258</span>
+    <span class="line" style="font-size:120px;color:#e2e8f0">天</span>
+  </div>
+  <div style="margin-top:40px;font-size:66px;font-weight:800;color:#fb7185;line-height:1.3">我一天都不想多上</div>`,
+
+  E: `
+  <div class="kicker">离 55 岁还有 8258 天</div>
+  <div class="line" style="font-size:118px;color:#94a3b8;margin-top:44px">我的</div>
+  <div class="line" style="font-size:186px;color:#e2e8f0;margin-top:6px">赎身价</div>
+  <div style="display:flex;align-items:baseline;gap:14px;margin-top:14px">
+    <span class="line mono" style="font-size:400px;color:#fbbf24">15</span>
+    <span class="line" style="font-size:150px;color:#fbbf24">万</span>
+  </div>
+  <div style="margin-top:34px;font-size:46px;font-weight:700;color:#34d399">可分期 271 期 · 每月 447</div>`,
 }
 
 const jobs = Object.entries(covers).map(([name, body]) => [name, page(body), 1080, 1440])
