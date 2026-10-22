@@ -91,6 +91,16 @@ const covers = {
     <span class="line" style="font-size:150px;color:#fbbf24">万</span>
   </div>
   <div style="margin-top:34px;font-size:46px;font-weight:700;color:#34d399">可分期 271 期 · 每月 447</div>`,
+
+  F: `
+  <div class="kicker">32 岁 · 55 岁退休</div>
+  <div class="line" style="font-size:124px;color:#94a3b8;margin-top:46px">还要交</div>
+  <div style="display:flex;align-items:baseline;gap:14px;margin-top:6px">
+    <span class="line mono" style="font-size:400px;color:#fbbf24">162</span>
+    <span class="line" style="font-size:150px;color:#fbbf24">万</span>
+  </div>
+  <div class="line" style="font-size:172px;color:#e2e8f0;margin-top:10px">社保</div>
+  <div style="margin-top:34px;font-size:44px;font-weight:700;color:#34d399">其中 108 万，是公司交的</div>`,
 }
 
 const jobs = Object.entries(covers).map(([name, body]) => [name, page(body), 1080, 1440])
