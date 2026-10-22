@@ -432,11 +432,11 @@ cards.push(`
 cards.push(`
 <div style="display:flex;flex-direction:column;justify-content:center;align-items:center;height:100%;text-align:center">
   <div class="kicker" style="margin-bottom:38px">免费 · 30 秒</div>
-  <div style="font-size:96px;font-weight:900;letter-spacing:-.02em;line-height:1.15">
-    搜 <span class="emerald">RetireCount</span>
+  <div style="font-size:104px;font-weight:900;letter-spacing:-.02em;line-height:1.2">
+    想要<br><span class="emerald">计算器</span>？
   </div>
-  <div style="font-size:38px;color:#94a3b8;margin-top:30px;line-height:1.6">
-    浏览器打开，输入生日就能用
+  <div style="font-size:40px;color:#94a3b8;margin-top:40px;line-height:1.7">
+    评论区扣「<span style="color:#e2e8f0">退休</span>」<br>我私信发你
   </div>
   <div style="display:flex;gap:16px;margin-top:56px;flex-wrap:wrap;justify-content:center">
     <span class="pill">不用注册</span><span class="pill">没有广告</span><span class="pill">可离线</span>
